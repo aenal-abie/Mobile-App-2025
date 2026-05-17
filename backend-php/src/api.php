@@ -96,6 +96,17 @@ function kirim_json(array $data, int $status = 200): void
     exit;
 }
 
+function kirim_preflight(): void
+{
+    header('Access-Control-Allow-Origin: ' . ($_ENV['CORS_ALLOWED_ORIGINS'] ?? '*'));
+    header('Vary: Origin');
+    header('Access-Control-Allow-Headers: Content-Type, Authorization');
+    header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
+    header('Access-Control-Max-Age: 86400');
+    http_response_code(204);
+    exit;
+}
+
 function respon_ok(string $pesan, mixed $data = null, int $status = 200, array $extra = []): void
 {
     $payload = array_merge([
@@ -219,10 +230,20 @@ function ambil_tugas(int $id, int $idPengguna): ?array
 function ambil_path(): string
 {
     $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
-    $base = '/backend-php/public';
-    if (str_starts_with($path, $base)) {
-        $path = substr($path, strlen($base));
+    $prefixes = [
+        '/public/index.php',
+        '/index.php',
+        '/backend-php/public/index.php',
+        '/backend-php/public',
+    ];
+
+    foreach ($prefixes as $prefix) {
+        if (str_starts_with($path, $prefix)) {
+            $path = substr($path, strlen($prefix));
+            break;
+        }
     }
+
     return '/' . trim($path, '/');
 }
 
@@ -230,8 +251,7 @@ $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 $path = ambil_path();
 
 if ($method === 'OPTIONS') {
-    http_response_code(204);
-    exit;
+    kirim_preflight();
 }
 
 if ($path === '/' && $method === 'GET') {

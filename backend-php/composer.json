@@ -1,0 +1,18 @@
+{
+  "name": "catatan-tugas-kuliah/backend-php",
+  "description": "Backend API PHP native untuk aplikasi catatan tugas kuliah",
+  "type": "project",
+  "require": {
+    "php": "^8.0",
+    "firebase/php-jwt": "^6.10",
+    "vlucas/phpdotenv": "^5.6"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "src/"
+    }
+  },
+  "scripts": {
+    "serve": "php -S localhost:8000 -t public"
+  }
+}

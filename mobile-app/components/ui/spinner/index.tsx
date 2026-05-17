@@ -1,5 +1,5 @@
 'use client';
-import { ActivityIndicator } from 'react-native';
+import { ActivityIndicator, Platform } from 'react-native';
 import React from 'react';
 import { tva } from '@gluestack-ui/utils/nativewind-utils';
 import { cssInterop } from 'nativewind';
@@ -23,6 +23,27 @@ const Spinner = React.forwardRef<
   },
   ref
 ) {
+  if (Platform.OS === 'web') {
+    return (
+      <span
+        ref={ref as unknown as React.Ref<HTMLSpanElement>}
+        aria-label={ariaLabel}
+        className={spinnerStyle({ class: className })}
+        style={{
+          display: 'inline-block',
+          width: 16,
+          height: 16,
+          border: '2px solid currentColor',
+          borderTopColor: 'transparent',
+          borderRadius: '9999px',
+          animation: 'spin 0.8s linear infinite',
+          color: color ?? '#3b82f6',
+        }}
+        {...props}
+      />
+    );
+  }
+
   return (
     <ActivityIndicator
       ref={ref}

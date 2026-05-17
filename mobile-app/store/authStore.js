@@ -33,10 +33,9 @@ export const gunakkanStoreAut = create((set) => ({
       const dataRespon = respon.data;
 
       if (dataRespon.sukses) {
-        const { token, ...pengguna } = dataRespon.data;
-        await AsyncStorage.setItem('token', token);
-        await AsyncStorage.setItem('pengguna', JSON.stringify(pengguna));
-        set({ token, pengguna });
+        const penggunaBaru = dataRespon.data ?? {};
+        await AsyncStorage.setItem('pengguna', JSON.stringify(penggunaBaru));
+        set({ pengguna: penggunaBaru });
       } else {
         set({ error: dataRespon.pesan || 'Pendaftaran gagal' });
         throw new Error(dataRespon.pesan);
@@ -58,10 +57,16 @@ export const gunakkanStoreAut = create((set) => ({
       const dataRespon = respon.data;
 
       if (dataRespon.sukses) {
-        const { token, ...pengguna } = dataRespon.data;
+        const token = dataRespon.token;
+        const penggunaBaru = dataRespon.pengguna ?? dataRespon.data ?? null;
+
+        if (!token || !penggunaBaru) {
+          throw new Error('Respons login tidak lengkap dari server');
+        }
+
         await AsyncStorage.setItem('token', token);
-        await AsyncStorage.setItem('pengguna', JSON.stringify(pengguna));
-        set({ token, pengguna });
+        await AsyncStorage.setItem('pengguna', JSON.stringify(penggunaBaru));
+        set({ token, pengguna: penggunaBaru });
       } else {
         set({ error: dataRespon.pesan || 'Login gagal' });
         throw new Error(dataRespon.pesan);
@@ -95,7 +100,10 @@ export const gunakkanStoreAut = create((set) => ({
       const dataRespon = respon.data;
 
       if (dataRespon.sukses) {
-        const penggunaBaru = dataRespon.data;
+        const penggunaBaru = dataRespon.data ?? null;
+        if (!penggunaBaru) {
+          throw new Error('Respons profil tidak lengkap dari server');
+        }
         await AsyncStorage.setItem('pengguna', JSON.stringify(penggunaBaru));
         set({ pengguna: penggunaBaru });
       } else {

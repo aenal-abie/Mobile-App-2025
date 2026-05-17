@@ -65,12 +65,6 @@ export const Icon = React.forwardRef<
 
 type ParameterTypes = Omit<Parameters<typeof createIcon>[0], 'Root'>;
 
-const accessClassName = (style: any) => {
-  const styleObject = Array.isArray(style) ? style[0] : style;
-  const keys = Object.keys(styleObject);
-  return styleObject[keys[1]];
-};
-
 const createIconUI = ({ ...props }: ParameterTypes) => {
   const NewUIIcon = createIcon({ Root: Svg, ...props });
   return React.forwardRef<
@@ -80,17 +74,32 @@ const createIconUI = ({ ...props }: ParameterTypes) => {
         height?: number | string;
         width?: number | string;
       }
-  >(function UIIcon({ className, ...inComingprops }, ref) {
+  >(function UIIcon({ className, style, ...inComingprops }, ref) {
     const calculateClassName = React.useMemo(() => {
-      return className === undefined
-        ? accessClassName(inComingprops?.style)
-        : className;
-    }, [className, inComingprops?.style]);
+      if (className !== undefined) {
+        return className;
+      }
+
+      if (Array.isArray(style)) {
+        const firstStyle = style[0];
+        return typeof firstStyle === 'object' && firstStyle !== null
+          ? firstStyle.className
+          : undefined;
+      }
+
+      if (style && typeof style === 'object') {
+        return (style as { className?: string }).className;
+      }
+
+      return undefined;
+    }, [className, style]);
+
     return (
       <NewUIIcon
         // @ts-expect-error : TODO: fix this
         ref={ref}
         {...inComingprops}
+        style={undefined}
         className={calculateClassName}
       />
     );

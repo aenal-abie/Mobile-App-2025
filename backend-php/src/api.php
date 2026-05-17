@@ -1,24 +1,121 @@
 <?php
 
-require __DIR__ . '/../vendor/autoload.php';
+function muat_env(string $path): void
+{
+    if (!file_exists($path)) {
+        return;
+    }
 
-use Dotenv\Dotenv;
-use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
+    $baris = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    if ($baris === false) {
+        return;
+    }
 
-if (file_exists(__DIR__ . '/../.env')) {
-    Dotenv::createImmutable(__DIR__ . '/..')->safeLoad();
+    foreach ($baris as $line) {
+        $line = trim($line);
+        if ($line === '' || str_starts_with($line, '#') || !str_contains($line, '=')) {
+            continue;
+        }
+
+        [$key, $value] = array_map('trim', explode('=', $line, 2));
+        if ($key === '') {
+            continue;
+        }
+
+        $value = trim($value, "\"'");
+        $_ENV[$key] = $value;
+        putenv($key . '=' . $value);
+    }
+}
+
+muat_env(__DIR__ . '/../.env');
+
+function base64url_encode(string $data): string
+{
+    return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
+}
+
+function base64url_decode(string $data): string
+{
+    $remainder = strlen($data) % 4;
+    if ($remainder) {
+        $data .= str_repeat('=', 4 - $remainder);
+    }
+    return base64_decode(strtr($data, '-_', '+/')) ?: '';
+}
+
+function jwt_encode(array $payload, string $secret): string
+{
+    $header = ['alg' => 'HS256', 'typ' => 'JWT'];
+    $segments = [
+        base64url_encode((string) json_encode($header, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)),
+        base64url_encode((string) json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)),
+    ];
+
+    $signature = hash_hmac('sha256', implode('.', $segments), $secret, true);
+    $segments[] = base64url_encode($signature);
+
+    return implode('.', $segments);
+}
+
+function jwt_decode(string $token, string $secret): array
+{
+    $parts = explode('.', $token);
+    if (count($parts) !== 3) {
+        throw new RuntimeException('Token format tidak valid');
+    }
+
+    [$encodedHeader, $encodedPayload, $encodedSignature] = $parts;
+    $signature = base64url_encode(hash_hmac('sha256', $encodedHeader . '.' . $encodedPayload, $secret, true));
+
+    if (!hash_equals($signature, $encodedSignature)) {
+        throw new RuntimeException('Tanda tangan token tidak cocok');
+    }
+
+    $payload = json_decode(base64url_decode($encodedPayload), true);
+    if (!is_array($payload)) {
+        throw new RuntimeException('Payload token tidak valid');
+    }
+
+    if (isset($payload['exp']) && time() >= (int) $payload['exp']) {
+        throw new RuntimeException('Token kedaluwarsa');
+    }
+
+    return $payload;
 }
 
 function kirim_json(array $data, int $status = 200): void
 {
     header('Content-Type: application/json; charset=utf-8');
     header('Access-Control-Allow-Origin: ' . ($_ENV['CORS_ALLOWED_ORIGINS'] ?? '*'));
+    header('Vary: Origin');
     header('Access-Control-Allow-Headers: Content-Type, Authorization');
     header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
     http_response_code($status);
     echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
+}
+
+function respon_ok(string $pesan, mixed $data = null, int $status = 200, array $extra = []): void
+{
+    $payload = array_merge([
+        'sukses' => true,
+        'pesan' => $pesan,
+    ], $extra);
+
+    if ($data !== null) {
+        $payload['data'] = $data;
+    }
+
+    kirim_json($payload, $status);
+}
+
+function respon_gagal(string $pesan, int $status = 400, array $extra = []): void
+{
+    kirim_json(array_merge([
+        'sukses' => false,
+        'pesan' => $pesan,
+    ], $extra), $status);
 }
 
 function ambil_json(): array
@@ -62,6 +159,10 @@ function db(): PDO
 function ambil_token(): ?string
 {
     $header = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
+    if (!$header && function_exists('getallheaders')) {
+        $headers = getallheaders();
+        $header = $headers['Authorization'] ?? $headers['authorization'] ?? '';
+    }
     if (preg_match('/Bearer\s+(.*)$/i', $header, $cocok)) {
         return trim($cocok[1]);
     }
@@ -78,25 +179,24 @@ function buat_token(array $data): string
         'data' => $data,
     ];
 
-    return JWT::encode($payload, $_ENV['JWT_SECRET'] ?? 'ubah_rahasia_jwt_ini', 'HS256');
+    return jwt_encode($payload, $_ENV['JWT_SECRET'] ?? 'ubah_rahasia_jwt_ini');
 }
 
 function login_wajib(): array
 {
     $token = ambil_token();
     if (!$token) {
-        kirim_json(['pesan' => 'Token tidak ditemukan'], 401);
+        respon_gagal('Token tidak ditemukan', 401);
     }
 
     try {
-        $decoded = JWT::decode($token, new Key($_ENV['JWT_SECRET'] ?? 'ubah_rahasia_jwt_ini', 'HS256'));
-        $data = json_decode(json_encode($decoded), true);
+        $data = jwt_decode($token, $_ENV['JWT_SECRET'] ?? 'ubah_rahasia_jwt_ini');
         if (!isset($data['data']['id'])) {
             throw new Exception('Token tidak valid');
         }
         return $data['data'];
     } catch (Throwable) {
-        kirim_json(['pesan' => 'Token tidak valid atau kedaluwarsa'], 401);
+        respon_gagal('Token tidak valid atau kedaluwarsa', 401);
     }
 }
 
@@ -135,21 +235,21 @@ if ($method === 'OPTIONS') {
 }
 
 if ($path === '/' && $method === 'GET') {
-    kirim_json(['pesan' => 'API backend-php aktif']);
+    respon_ok('API backend-php aktif');
 }
 
 if ($path === '/api/aut/daftar' && $method === 'POST') {
     $data = ambil_json();
     $kesalahan = validasi_wajib($data, ['nama', 'email', 'kata_sandi']);
     if ($kesalahan) {
-        kirim_json(['pesan' => 'Validasi gagal', 'kesalahan' => $kesalahan], 422);
+        respon_gagal('Validasi gagal', 422, ['kesalahan' => $kesalahan]);
     }
 
     $email = strtolower(trim((string) $data['email']));
     $cek = db()->prepare('SELECT id FROM pengguna WHERE email = :email LIMIT 1');
     $cek->execute(['email' => $email]);
     if ($cek->fetch()) {
-        kirim_json(['pesan' => 'Email sudah terdaftar'], 409);
+        respon_gagal('Email sudah terdaftar', 409);
     }
 
     $stmt = db()->prepare('INSERT INTO pengguna (email, kata_sandi, nama) VALUES (:email, :kata_sandi, :nama)');
@@ -159,16 +259,21 @@ if ($path === '/api/aut/daftar' && $method === 'POST') {
         'nama' => trim((string) $data['nama']),
     ]);
 
-    $pengguna = ambil_pengguna((int) db()->lastInsertId());
-    $token = buat_token($pengguna ?? ['id' => (int) db()->lastInsertId()]);
-    kirim_json(['pesan' => 'Pendaftaran berhasil', 'data' => ['pengguna' => $pengguna, 'token' => $token]], 201);
+    $idPengguna = (int) db()->lastInsertId();
+    $pengguna = ambil_pengguna($idPengguna);
+    respon_ok(
+        'Pendaftaran berhasil',
+        $pengguna,
+        201,
+        $pengguna ? ['pengguna' => $pengguna] : []
+    );
 }
 
 if ($path === '/api/aut/masuk' && $method === 'POST') {
     $data = ambil_json();
     $kesalahan = validasi_wajib($data, ['email', 'kata_sandi']);
     if ($kesalahan) {
-        kirim_json(['pesan' => 'Validasi gagal', 'kesalahan' => $kesalahan], 422);
+        respon_gagal('Validasi gagal', 422, ['kesalahan' => $kesalahan]);
     }
 
     $stmt = db()->prepare('SELECT * FROM pengguna WHERE email = :email LIMIT 1');
@@ -176,46 +281,66 @@ if ($path === '/api/aut/masuk' && $method === 'POST') {
     $pengguna = $stmt->fetch();
 
     if (!$pengguna || !password_verify((string) $data['kata_sandi'], (string) $pengguna['kata_sandi'])) {
-        kirim_json(['pesan' => 'Email atau kata sandi salah'], 401);
+        respon_gagal('Email atau kata sandi salah', 401);
     }
 
     unset($pengguna['kata_sandi']);
     $token = buat_token($pengguna);
-    kirim_json(['pesan' => 'Login berhasil', 'data' => ['pengguna' => $pengguna, 'token' => $token]]);
+    kirim_json([
+        'sukses' => true,
+        'pesan' => 'Berhasil masuk akun!',
+        'token' => $token,
+        'pengguna' => $pengguna,
+    ]);
 }
 
 if ($path === '/api/aut/keluar' && $method === 'POST') {
-    kirim_json(['pesan' => 'Logout berhasil']);
+    respon_ok('Logout berhasil');
 }
 
 if ($path === '/api/aut/profil' && $method === 'GET') {
     $pengguna = login_wajib();
-    kirim_json(['pesan' => 'Profil berhasil diambil', 'data' => $pengguna]);
+    respon_ok('Profil berhasil diambil', $pengguna);
 }
 
 if ($path === '/api/aut/profil' && $method === 'PUT') {
     $penggunaLogin = login_wajib();
     $data = ambil_json();
-    $kesalahan = validasi_wajib($data, ['nama', 'email']);
+    $kesalahan = validasi_wajib($data, ['nama']);
     if ($kesalahan) {
-        kirim_json(['pesan' => 'Validasi gagal', 'kesalahan' => $kesalahan], 422);
+        respon_gagal('Validasi gagal', 422, ['kesalahan' => $kesalahan]);
     }
 
-    $stmt = db()->prepare('UPDATE pengguna SET nama = :nama, email = :email WHERE id = :id');
+    $emailBaru = isset($data['email']) && trim((string) $data['email']) !== ''
+        ? strtolower(trim((string) $data['email']))
+        : null;
+
+    if ($emailBaru !== null) {
+        $cek = db()->prepare('SELECT id FROM pengguna WHERE email = :email AND id <> :id LIMIT 1');
+        $cek->execute([
+            'email' => $emailBaru,
+            'id' => (int) $penggunaLogin['id'],
+        ]);
+        if ($cek->fetch()) {
+            respon_gagal('Email sudah digunakan pengguna lain', 409);
+        }
+    }
+
+    $stmt = db()->prepare('UPDATE pengguna SET nama = :nama, email = COALESCE(:email, email) WHERE id = :id');
     $stmt->execute([
         'id' => (int) $penggunaLogin['id'],
         'nama' => trim((string) $data['nama']),
-        'email' => strtolower(trim((string) $data['email'])),
+        'email' => $emailBaru,
     ]);
 
-    kirim_json(['pesan' => 'Profil berhasil diperbarui', 'data' => ambil_pengguna((int) $penggunaLogin['id'])]);
+    respon_ok('Profil berhasil diperbarui', ambil_pengguna((int) $penggunaLogin['id']));
 }
 
 if ($path === '/api/tugas' && $method === 'GET') {
     $penggunaLogin = login_wajib();
     $stmt = db()->prepare('SELECT * FROM tugas WHERE id_pengguna = :id_pengguna ORDER BY tgl_deadline IS NULL, tgl_deadline ASC, id DESC');
     $stmt->execute(['id_pengguna' => (int) $penggunaLogin['id']]);
-    kirim_json(['pesan' => 'Data tugas berhasil diambil', 'data' => $stmt->fetchAll()]);
+    respon_ok('Data tugas berhasil diambil', $stmt->fetchAll());
 }
 
 if ($path === '/api/tugas' && $method === 'POST') {
@@ -223,7 +348,7 @@ if ($path === '/api/tugas' && $method === 'POST') {
     $data = ambil_json();
     $kesalahan = validasi_wajib($data, ['judul']);
     if ($kesalahan) {
-        kirim_json(['pesan' => 'Validasi gagal', 'kesalahan' => $kesalahan], 422);
+        respon_gagal('Validasi gagal', 422, ['kesalahan' => $kesalahan]);
     }
 
     $stmt = db()->prepare(
@@ -241,23 +366,23 @@ if ($path === '/api/tugas' && $method === 'POST') {
         'sudah_selesai' => !empty($data['sudah_selesai']) ? 1 : 0,
         'tgl_selesai' => $data['tgl_selesai'] ?? null,
     ]);
-    kirim_json(['pesan' => 'Tugas berhasil dibuat', 'data' => ['id' => (int) db()->lastInsertId()]], 201);
+    respon_ok('Tugas berhasil dibuat', ['id' => (int) db()->lastInsertId()], 201);
 }
 
 if (preg_match('#^/api/tugas/(\d+)$#', $path, $cocok) && $method === 'GET') {
     $penggunaLogin = login_wajib();
     $tugas = ambil_tugas((int) $cocok[1], (int) $penggunaLogin['id']);
     if (!$tugas) {
-        kirim_json(['pesan' => 'Tugas tidak ditemukan'], 404);
+        respon_gagal('Tugas tidak ditemukan', 404);
     }
-    kirim_json(['pesan' => 'Detail tugas berhasil diambil', 'data' => $tugas]);
+    respon_ok('Detail tugas berhasil diambil', $tugas);
 }
 
 if (preg_match('#^/api/tugas/(\d+)$#', $path, $cocok) && $method === 'PUT') {
     $penggunaLogin = login_wajib();
     $tugas = ambil_tugas((int) $cocok[1], (int) $penggunaLogin['id']);
     if (!$tugas) {
-        kirim_json(['pesan' => 'Tugas tidak ditemukan'], 404);
+        respon_gagal('Tugas tidak ditemukan', 404);
     }
 
     $data = ambil_json();
@@ -281,26 +406,26 @@ if (preg_match('#^/api/tugas/(\d+)$#', $path, $cocok) && $method === 'PUT') {
         'tgl_selesai' => array_key_exists('tgl_selesai', $data) ? $data['tgl_selesai'] : ($sudahSelesai ? ($tugas['tgl_selesai'] ?? date('Y-m-d H:i:s')) : null),
     ]);
 
-    kirim_json(['pesan' => 'Tugas berhasil diperbarui', 'data' => ambil_tugas((int) $cocok[1], (int) $penggunaLogin['id'])]);
+    respon_ok('Tugas berhasil diperbarui', ambil_tugas((int) $cocok[1], (int) $penggunaLogin['id']));
 }
 
 if (preg_match('#^/api/tugas/(\d+)$#', $path, $cocok) && $method === 'DELETE') {
     $penggunaLogin = login_wajib();
     $tugas = ambil_tugas((int) $cocok[1], (int) $penggunaLogin['id']);
     if (!$tugas) {
-        kirim_json(['pesan' => 'Tugas tidak ditemukan'], 404);
+        respon_gagal('Tugas tidak ditemukan', 404);
     }
 
     $stmt = db()->prepare('DELETE FROM tugas WHERE id = :id AND id_pengguna = :id_pengguna');
     $stmt->execute(['id' => (int) $cocok[1], 'id_pengguna' => (int) $penggunaLogin['id']]);
-    kirim_json(['pesan' => 'Tugas berhasil dihapus']);
+    respon_ok('Tugas berhasil dihapus');
 }
 
 if (preg_match('#^/api/tugas/(\d+)/selesai$#', $path, $cocok) && $method === 'PATCH') {
     $penggunaLogin = login_wajib();
     $tugas = ambil_tugas((int) $cocok[1], (int) $penggunaLogin['id']);
     if (!$tugas) {
-        kirim_json(['pesan' => 'Tugas tidak ditemukan'], 404);
+        respon_gagal('Tugas tidak ditemukan', 404);
     }
 
     $statusBaru = ((int) $tugas['sudah_selesai'] === 1) ? 0 : 1;
@@ -315,7 +440,7 @@ if (preg_match('#^/api/tugas/(\d+)/selesai$#', $path, $cocok) && $method === 'PA
         'tgl_selesai' => $statusBaru ? date('Y-m-d H:i:s') : null,
     ]);
 
-    kirim_json(['pesan' => 'Status tugas berhasil diperbarui', 'data' => ambil_tugas((int) $cocok[1], (int) $penggunaLogin['id'])]);
+    respon_ok('Status tugas berhasil diperbarui', ambil_tugas((int) $cocok[1], (int) $penggunaLogin['id']));
 }
 
-kirim_json(['pesan' => 'Rute tidak ditemukan'], 404);
+respon_gagal('Rute tidak ditemukan', 404);

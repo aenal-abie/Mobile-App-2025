@@ -40,13 +40,24 @@ Komputer dan HP Anda **wajib terhubung pada jaringan Wi-Fi yang sama**.
 
 Pastikan layanan Apache dan MySQL di XAMPP Anda sudah berstatus **Start**.
 
-### Langkah 1: Jalankan Server Backend PHP
-1. Buka Terminal baru, masuk ke direktori `backend-php/`.
-2. Jalankan perintah:
-   ```bash
-   composer run serve
-   ```
-3. Pastikan server aktif di alamat `http://localhost:8000`.
+### Langkah 1: Jalankan Salah Satu Server Backend (PHP atau Express)
+Pilih salah satu backend yang ingin Anda gunakan (keduanya berjalan di port `8000`):
+
+* **Opsi A: Menggunakan Node.js Express (Rekomendasi - JS)**
+  1. Buka Terminal baru, masuk ke direktori `backend-express/`.
+  2. Jalankan perintah:
+     ```bash
+     npm run dev
+     ```
+  3. Server aktif di alamat `http://localhost:8000`.
+
+* **Opsi B: Menggunakan PHP Native**
+  1. Buka Terminal baru, masuk ke direktori `backend-php/`.
+  2. Jalankan perintah:
+     ```bash
+     composer run serve
+     ```
+  3. Server aktif di alamat `http://localhost:8000`.
 
 ### Langkah 2: Jalankan Metro Bundler Mobile App
 1. Buka Terminal baru lainnya, masuk ke direktori `mobile-app/`.

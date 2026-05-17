@@ -38,6 +38,11 @@ Silakan ikuti panduan ini secara berurutan agar aplikasi dapat berjalan dengan s
 * Konfigurasi koneksi database PHP.
 * Cara menjalankan server PHP built-in dan daftar endpoint REST API.
 
+### 📑 [2B. Pengaturan Backend API (Node.js Express & Sequelize)](./2b_setup_backend_express.md)
+* Memahami struktur MVC dan Sequelize ORM.
+* Instalasi dependencies dan pengaturan variabel `.env`.
+* Menjalankan server Express dan fitur kompatibilitas ganda rute/parameter API.
+
 ### 📑 [3. Pengaturan Mobile App (React Native Expo)](./3_setup_mobile_app.md)
 * Persiapan lingkungan kerja React Native Node.js & Expo.
 * Penjelasan instalasi modul-modul pendukung (`zustand`, `axios`, `async-storage`).

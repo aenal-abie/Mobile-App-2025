@@ -69,7 +69,7 @@ mobile-app/
 ├── utils/
 │   └── formatting.js         <-- Formatter tanggal Indonesia & warna prioritas
 └── app/
-    ├── _layout.tsx           <-- Titik masuk utama & Provider UI
+    ├── _layout.js            <-- Titik masuk utama & Provider UI
     ├── index.js              <-- Auth Gate / Splash Screen (Pemeriksa Token)
     ├── auth/
     │   ├── login.js          <-- Form masuk akun mahasiswa
@@ -268,9 +268,9 @@ export default function LoginScreen() {
 
 Agar desain aplikasi selalu konsisten dan tampak terang (terhindar dari warna teks atau latar belakang yang pecah/hilang ketika tema HP pengguna berubah), aplikasi ini dikunci ke dalam **Light Mode** secara permanen.
 
-Pengaturan ini dikonfigurasi di dalam berkas entry layout **[app/_layout.tsx](../mobile-app/app/_layout.tsx)**:
+Pengaturan ini dikonfigurasi di dalam berkas entry layout **[app/_layout.js](../mobile-app/app/_layout.js)**:
 
-```tsx
+```jsx
 function RootLayoutNav() {
   return (
     <GluestackUIProvider mode="light">

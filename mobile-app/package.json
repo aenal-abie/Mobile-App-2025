@@ -1,0 +1,27 @@
+{
+  "name": "mobile-app",
+  "version": "1.0.0",
+  "private": true,
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web"
+  },
+  "dependencies": {
+    "axios": "^1.8.4",
+    "expo": "~53.0.0",
+    "expo-status-bar": "~2.2.3",
+    "@gluestack-ui/themed": "^1.1.73",
+    "@gluestack-ui/config-v2": "^1.1.1",
+    "@gluestack-style/react": "^1.0.64",
+    "@react-native-async-storage/async-storage": "^2.1.2",
+    "@react-navigation/native": "^6.1.18",
+    "@react-navigation/native-stack": "^6.11.0",
+    "react-native-svg": "13.4.0",
+    "react": "19.0.0",
+    "react-native": "0.79.2",
+    "zustand": "^5.0.3"
+  }
+}

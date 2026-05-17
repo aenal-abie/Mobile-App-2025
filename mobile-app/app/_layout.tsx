@@ -43,38 +43,11 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
-  const pathname = usePathname();
-  const systemColorScheme = useColorScheme();
-  const [mode, setMode] = useState<'system' | 'light' | 'dark'>('system');
-
-  // Determine effective color scheme
-  const effectiveColorScheme = mode === 'system'
-    ? (systemColorScheme ?? 'light')
-    : mode;
-
-  const handleToggleTheme = () => {
-    if (mode === 'system') {
-      setMode('light');
-    } else if (mode === 'light') {
-      setMode('dark');
-    } else {
-      setMode('system');
-    }
-  };
-
   return (
-    <GluestackUIProvider mode={mode}>
-      <ThemeProvider value={effectiveColorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <GluestackUIProvider mode="light">
+      <ThemeProvider value={DefaultTheme}>
+        <StatusBar style="dark" />
         <Slot />
-        {pathname === '/' && (
-          <Fab
-            onPress={handleToggleTheme}
-            className="m-6"
-            size="lg"
-          >
-            <FabIcon as={mode === 'system' ? SlashIcon : (effectiveColorScheme === 'dark' ? MoonIcon : SunIcon)} />
-          </Fab>
-        )}
       </ThemeProvider>
     </GluestackUIProvider>
   );

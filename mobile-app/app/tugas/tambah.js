@@ -78,7 +78,7 @@ export default function TambahTugasScreen() {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      className="flex-1 bg-background-950"
+      className="flex-1 bg-slate-50"
     >
       <ScrollView className="flex-1">
         <Box className="p-6 pt-12 pb-20">
@@ -91,60 +91,63 @@ export default function TambahTugasScreen() {
               onPress={() => router.back()}
               aria-label="Kembali"
             >
-              <FontAwesome name="arrow-left" size={20} className="text-gray-400" />
+              <FontAwesome name="arrow-left" size={20} className="text-slate-500" />
             </Button>
-            <Heading size="xl" className="text-white font-extrabold">
+            <Heading size="xl" className="text-slate-900 font-extrabold">
               Tambah Tugas Baru
             </Heading>
           </Box>
 
-          <Box className="gap-5">
+          <Box className="gap-5 bg-white p-6 rounded-3xl border border-slate-100 shadow-md shadow-slate-100">
             {/* Input Judul */}
             <Box className="gap-1.5">
-              <Text className="text-gray-300 font-semibold text-sm">Judul Tugas</Text>
-              <Input className="bg-background-900 border-white/10 rounded-xl px-3 py-1 focus:border-primary-500">
+              <Text className="text-slate-700 font-bold text-sm">Judul Tugas</Text>
+              <Input className="bg-slate-50/50 border-slate-200 rounded-xl px-3 py-1 focus:border-primary-500">
                 <InputField
                   placeholder="Contoh: Laporan Fisika Dasar"
                   value={judul}
                   onChangeText={setJudul}
-                  className="text-white text-sm"
+                  className="text-slate-900 text-sm font-semibold"
+                  placeholderTextColor="#94a3b8"
                 />
               </Input>
             </Box>
 
             {/* Input Mata Kuliah */}
             <Box className="gap-1.5">
-              <Text className="text-gray-300 font-semibold text-sm">Mata Kuliah</Text>
-              <Input className="bg-background-900 border-white/10 rounded-xl px-3 py-1 focus:border-primary-500">
+              <Text className="text-slate-700 font-bold text-sm">Mata Kuliah</Text>
+              <Input className="bg-slate-50/50 border-slate-200 rounded-xl px-3 py-1 focus:border-primary-500">
                 <InputField
                   placeholder="Contoh: Fisika Dasar I"
                   value={mataKuliah}
                   onChangeText={setMataKuliah}
-                  className="text-white text-sm"
+                  className="text-slate-900 text-sm font-semibold"
+                  placeholderTextColor="#94a3b8"
                 />
               </Input>
             </Box>
 
             {/* Selector Prioritas */}
             <Box className="gap-1.5">
-              <Text className="text-gray-300 font-semibold text-sm">Tingkat Prioritas</Text>
+              <Text className="text-slate-700 font-bold text-sm">Tingkat Prioritas</Text>
               <Box className="flex-row gap-3">
                 {['RENDAH', 'SEDANG', 'TINGGI'].map((p) => {
                   const isActive = prioritas === p;
-                  let colorActive = 'bg-success-600';
-                  if (p === 'SEDANG') colorActive = 'bg-amber-600';
-                  if (p === 'TINGGI') colorActive = 'bg-red-600';
+                  let colorActive = 'bg-success-600 border-success-600';
+                  let textActive = 'text-white';
+                  if (p === 'SEDANG') colorActive = 'bg-amber-600 border-amber-600';
+                  if (p === 'TINGGI') colorActive = 'bg-red-600 border-red-600';
 
                   return (
                     <Button
                       key={p}
                       size="sm"
                       className={`flex-1 rounded-xl py-2 h-auto border ${
-                        isActive ? colorActive : 'bg-background-900 border-white/10'
+                        isActive ? colorActive : 'bg-slate-50 border-slate-200'
                       }`}
                       onPress={() => setPrioritas(p)}
                     >
-                      <ButtonText className="text-white font-bold text-xs">{p}</ButtonText>
+                      <ButtonText className={`font-extrabold text-xs ${isActive ? textActive : 'text-slate-500'}`}>{p}</ButtonText>
                     </Button>
                   );
                 })}
@@ -153,45 +156,45 @@ export default function TambahTugasScreen() {
 
             {/* Deadline Picker Custom */}
             <Box className="gap-2.5">
-              <Text className="text-gray-300 font-semibold text-sm">Batas Waktu (Deadline)</Text>
+              <Text className="text-slate-700 font-bold text-sm">Batas Waktu (Deadline)</Text>
               
               {/* Shortcut Dates */}
-              <Box className="flex-row gap-2">
-                <Button size="xs" className="bg-background-900 border border-white/10 rounded-full px-3 py-1 h-auto" onPress={() => setTanggalPintasan(0)}>
-                  <ButtonText className="text-gray-300 text-2xs font-semibold">Hari Ini</ButtonText>
+              <Box className="flex-row gap-2 flex-wrap">
+                <Button size="xs" className="bg-slate-50 border border-slate-200 rounded-full px-3 py-1 h-auto" onPress={() => setTanggalPintasan(0)}>
+                  <ButtonText className="text-slate-600 text-2xs font-bold">Hari Ini</ButtonText>
                 </Button>
-                <Button size="xs" className="bg-background-900 border border-white/10 rounded-full px-3 py-1 h-auto" onPress={() => setTanggalPintasan(1)}>
-                  <ButtonText className="text-gray-300 text-2xs font-semibold">Besok</ButtonText>
+                <Button size="xs" className="bg-slate-50 border border-slate-200 rounded-full px-3 py-1 h-auto" onPress={() => setTanggalPintasan(1)}>
+                  <ButtonText className="text-slate-600 text-2xs font-bold">Besok</ButtonText>
                 </Button>
-                <Button size="xs" className="bg-background-900 border border-white/10 rounded-full px-3 py-1 h-auto" onPress={() => setTanggalPintasan(3)}>
-                  <ButtonText className="text-gray-300 text-2xs font-semibold">3 Hari Lagi</ButtonText>
+                <Button size="xs" className="bg-slate-50 border border-slate-200 rounded-full px-3 py-1 h-auto" onPress={() => setTanggalPintasan(3)}>
+                  <ButtonText className="text-slate-600 text-2xs font-bold">3 Hari</ButtonText>
                 </Button>
-                <Button size="xs" className="bg-background-900 border border-white/10 rounded-full px-3 py-1 h-auto" onPress={() => setTanggalPintasan(7)}>
-                  <ButtonText className="text-gray-300 text-2xs font-semibold">1 Minggu Lagi</ButtonText>
+                <Button size="xs" className="bg-slate-50 border border-slate-200 rounded-full px-3 py-1 h-auto" onPress={() => setTanggalPintasan(7)}>
+                  <ButtonText className="text-slate-600 text-2xs font-bold">1 Minggu</ButtonText>
                 </Button>
               </Box>
 
               {/* Tanggal & Waktu Inputs */}
               <Box className="flex-row gap-3">
                 <Box className="flex-1 gap-1">
-                  <Text className="text-gray-400 text-2xs font-semibold">Tanggal (YYYY-MM-DD)</Text>
-                  <Input className="bg-background-900 border-white/10 rounded-xl px-3 py-1">
+                  <Text className="text-slate-400 text-2xs font-semibold">Tanggal (YYYY-MM-DD)</Text>
+                  <Input className="bg-slate-50 border-slate-200 rounded-xl px-3 py-1">
                     <InputField
                       placeholder="YYYY-MM-DD"
                       value={tanggal}
                       onChangeText={setTanggal}
-                      className="text-white text-sm"
+                      className="text-slate-900 text-sm font-semibold"
                     />
                   </Input>
                 </Box>
                 <Box className="flex-1 gap-1" style={{ maxWidth: 120 }}>
-                  <Text className="text-gray-400 text-2xs font-semibold">Jam (HH:MM)</Text>
-                  <Input className="bg-background-900 border-white/10 rounded-xl px-3 py-1">
+                  <Text className="text-slate-400 text-2xs font-semibold">Jam (HH:MM)</Text>
+                  <Input className="bg-slate-50 border-slate-200 rounded-xl px-3 py-1">
                     <InputField
                       placeholder="23:59"
                       value={jam}
                       onChangeText={setJam}
-                      className="text-white text-sm"
+                      className="text-slate-900 text-sm font-semibold"
                     />
                   </Input>
                 </Box>
@@ -200,13 +203,14 @@ export default function TambahTugasScreen() {
 
             {/* Input Deskripsi */}
             <Box className="gap-1.5">
-              <Text className="text-gray-300 font-semibold text-sm">Deskripsi Tugas (Opsional)</Text>
-              <Textarea className="bg-background-900 border-white/10 rounded-xl p-2.5 h-32 focus:border-primary-500">
+              <Text className="text-slate-700 font-bold text-sm">Deskripsi Tugas (Opsional)</Text>
+              <Textarea className="bg-slate-50/50 border-slate-200 rounded-xl p-2.5 h-32 focus:border-primary-500">
                 <TextareaInput
                   placeholder="Detail penjelasan mengenai tugas, tugas kelompok/individu, referensi, dll..."
                   value={deskripsi}
                   onChangeText={setDeskripsi}
-                  className="text-white text-sm"
+                  className="text-slate-900 text-sm font-semibold"
+                  placeholderTextColor="#94a3b8"
                   multiline
                 />
               </Textarea>
@@ -214,7 +218,7 @@ export default function TambahTugasScreen() {
 
             {/* Tombol Simpan */}
             <Button
-              className="bg-primary-500 hover:bg-primary-600 rounded-xl py-3.5 mt-4 shadow-lg shadow-primary-500/25 active:scale-95 flex-row justify-center items-center gap-2"
+              className="bg-primary-600 hover:bg-primary-700 rounded-xl py-3.5 mt-4 shadow-lg shadow-primary-600/20 active:scale-95 flex-row justify-center items-center gap-2"
               onPress={tanganiSimpan}
               disabled={sedangMemuat}
             >

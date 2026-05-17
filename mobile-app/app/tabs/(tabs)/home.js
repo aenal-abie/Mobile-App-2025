@@ -80,8 +80,8 @@ export default function HomeScreen() {
 
     return (
       <Card
-        className={`mb-4 mx-4 p-5 rounded-2xl border border-white/10 bg-background-900/40 relative active:opacity-90 ${
-          item.sudah_selesai ? 'opacity-60' : ''
+        className={`mb-4 mx-4 p-5 rounded-3xl border border-slate-100 bg-white relative active:opacity-90 shadow-sm shadow-slate-100 ${
+          item.sudah_selesai ? 'opacity-60 bg-slate-50/50' : ''
         }`}
         style={{ elevation: 2 }}
       >
@@ -95,24 +95,24 @@ export default function HomeScreen() {
             aria-label={`Tandai ${item.judul} selesai`}
             className="mt-1"
           >
-            <CheckboxIndicator className="rounded-md border-white/20 checked:bg-success-600 checked:border-success-600">
+            <CheckboxIndicator className="rounded-md border-slate-300 checked:bg-success-600 checked:border-success-600">
               <CheckboxIcon as={CheckIcon} className="text-white" />
             </CheckboxIndicator>
           </Checkbox>
 
           {/* Konten Tugas */}
-          <Box className="flex-1 ml-1" style={{ width: '60%' }}>
+          <Box className="flex-1 ml-1.5" style={{ width: '60%' }}>
             <Pressable style={{ width: '100%' }} onPress={() => router.push(`/tugas/detail?id=${item.id}`)}>
               <Heading
                 size="md"
-                className={`text-white font-bold leading-tight ${
-                  item.sudah_selesai ? 'line-through text-gray-500' : ''
+                className={`text-slate-900 font-extrabold leading-tight ${
+                  item.sudah_selesai ? 'line-through text-slate-400' : ''
                 }`}
               >
                 {item.judul}
               </Heading>
               
-              <Text className="text-gray-400 text-xs font-semibold mt-1">
+              <Text className="text-slate-500 text-xs font-bold mt-1">
                 📚 {item.mata_kuliah}
               </Text>
               
@@ -127,8 +127,8 @@ export default function HomeScreen() {
                 </Badge>
               </Box>
 
-              <Text className="text-gray-500 text-3xs font-medium mt-3.5">
-                📅 Deadline: {formatTanggalIndo(item.tgl_deadline)}
+              <Text className="text-slate-400 text-3xs font-semibold mt-3.5">
+                📅 Batas Waktu: {formatTanggalIndo(item.tgl_deadline)}
               </Text>
             </Pressable>
           </Box>
@@ -141,7 +141,7 @@ export default function HomeScreen() {
               onPress={() => router.push(`/tugas/edit?id=${item.id}`)}
               aria-label="Edit tugas"
             >
-              <FontAwesome name="pencil" size={16} className="text-primary-400" />
+              <FontAwesome name="pencil" size={16} className="text-primary-600" />
             </Button>
             <Button
               variant="link"
@@ -149,7 +149,7 @@ export default function HomeScreen() {
               onPress={() => tanganiHapus(item.id, item.judul)}
               aria-label="Hapus tugas"
             >
-              <FontAwesome name="trash" size={16} className="text-red-400" />
+              <FontAwesome name="trash" size={16} className="text-red-500" />
             </Button>
           </Box>
         </Box>
@@ -158,36 +158,37 @@ export default function HomeScreen() {
   };
 
   return (
-    <Box className="flex-1 bg-background-950">
+    <Box className="flex-1 bg-slate-50">
       {/* Header Premium */}
-      <Box className="pt-14 pb-5 px-5 bg-background-900 border-b border-white/5">
+      <Box className="pt-14 pb-5 px-5 bg-white border-b border-slate-100 shadow-sm shadow-slate-100/50">
         <Box className="flex-row justify-between items-center">
           <Box>
-            <Text className="text-gray-400 text-xs font-semibold tracking-wider">
+            <Text className="text-slate-400 text-xs font-bold tracking-wider">
               SELAMAT DATANG
             </Text>
-            <Heading size="xl" className="text-white font-extrabold">
+            <Heading size="xl" className="text-slate-900 font-extrabold">
               {pengguna?.nama || 'Mahasiswa'} 👋
             </Heading>
           </Box>
-          <Box className="bg-primary-500/10 border border-primary-500/20 p-2.5 rounded-2xl">
-            <FontAwesome name="calendar-check-o" size={22} className="text-primary-400" />
+          <Box className="bg-primary-50 border border-primary-100 p-2.5 rounded-2xl">
+            <FontAwesome name="calendar-check-o" size={22} className="text-primary-600" />
           </Box>
         </Box>
 
         {/* Pencarian */}
-        <Input className="bg-background-950 border-white/10 rounded-xl mt-4 px-3 py-1">
+        <Input className="bg-slate-50 border-slate-200 rounded-xl mt-4 px-3 py-1">
           <InputField
             placeholder="Cari tugas atau mata kuliah..."
             value={kataKunci}
             onChangeText={setKataKunci}
-            className="text-white text-sm"
+            className="text-slate-900 text-sm font-medium"
+            placeholderTextColor="#94a3b8"
           />
         </Input>
       </Box>
 
       {/* Filter Status (Horizontal) */}
-      <Box className="py-3 px-4 border-b border-white/5">
+      <Box className="py-3 px-4 border-b border-slate-100">
         <FlatList
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -199,62 +200,65 @@ export default function HomeScreen() {
           ]}
           keyExtractor={(item) => item.value}
           contentContainerStyle={{ gap: 8 }}
-          renderItem={({ item }) => (
-            <Button
-              size="sm"
-              onPress={() => setFilter(item.value)}
-              className={`rounded-full px-4 py-1.5 h-auto ${
-                filter === item.value
-                  ? 'bg-primary-500'
-                  : 'bg-background-900 border border-white/10'
-              }`}
-            >
-              <ButtonText
-                className={`text-xs font-bold ${
-                  filter === item.value ? 'text-white' : 'text-gray-400'
+          renderItem={({ item }) => {
+            const isActive = filter === item.value;
+            return (
+              <Button
+                size="sm"
+                onPress={() => setFilter(item.value)}
+                className={`rounded-full px-4 py-1.5 h-auto ${
+                  isActive
+                    ? 'bg-primary-600 shadow-sm shadow-primary-600/20'
+                    : 'bg-white border border-slate-200'
                 }`}
               >
-                {item.label}
-              </ButtonText>
-            </Button>
-          )}
+                <ButtonText
+                  className={`text-xs font-bold ${
+                    isActive ? 'text-white' : 'text-slate-500'
+                  }`}
+                >
+                  {item.label}
+                </ButtonText>
+              </Button>
+            );
+          }}
         />
       </Box>
 
       {/* Urutan (Sorting) & Jumlah Tugas */}
       <Box className="flex-row justify-between items-center px-5 py-3.5">
-        <Text className="text-gray-400 text-xs font-bold">
+        <Text className="text-slate-400 text-xs font-bold">
           {tugasTampil.length} Tugas Ditemukan
         </Text>
         
         {/* Toggle Urutan */}
-        <Box className="flex-row bg-background-900 border border-white/10 rounded-full p-0.5">
+        <Box className="flex-row bg-white border border-slate-200 rounded-full p-0.5 shadow-sm shadow-slate-100">
           <Button
             size="xs"
             onPress={() => setSort('deadline')}
             className={`rounded-full px-3 py-1 h-auto ${
-              sort === 'deadline' ? 'bg-primary-500' : 'bg-transparent'
+              sort === 'deadline' ? 'bg-primary-600' : 'bg-transparent'
             }`}
           >
-            <ButtonText className="text-2xs font-extrabold text-white">Deadline</ButtonText>
+            <ButtonText className={`text-2xs font-extrabold ${sort === 'deadline' ? 'text-white' : 'text-slate-500'}`}>Deadline</ButtonText>
           </Button>
           <Button
             size="xs"
             onPress={() => setSort('prioritas')}
             className={`rounded-full px-3 py-1 h-auto ${
-              sort === 'prioritas' ? 'bg-primary-500' : 'bg-transparent'
+              sort === 'prioritas' ? 'bg-primary-600' : 'bg-transparent'
             }`}
           >
-            <ButtonText className="text-2xs font-extrabold text-white">Prioritas</ButtonText>
+            <ButtonText className={`text-2xs font-extrabold ${sort === 'prioritas' ? 'text-white' : 'text-slate-500'}`}>Prioritas</ButtonText>
           </Button>
           <Button
             size="xs"
             onPress={() => setSort('terbaru')}
             className={`rounded-full px-3 py-1 h-auto ${
-              sort === 'terbaru' ? 'bg-primary-500' : 'bg-transparent'
+              sort === 'terbaru' ? 'bg-primary-600' : 'bg-transparent'
             }`}
           >
-            <ButtonText className="text-2xs font-extrabold text-white">Terbaru</ButtonText>
+            <ButtonText className={`text-2xs font-extrabold ${sort === 'terbaru' ? 'text-white' : 'text-slate-500'}`}>Terbaru</ButtonText>
           </Button>
         </Box>
       </Box>
@@ -263,7 +267,7 @@ export default function HomeScreen() {
       {sedangMemuat && tugasTampil.length === 0 ? (
         <Box className="flex-1 justify-center items-center">
           <Spinner size="large" color="#3b82f6" />
-          <Text className="text-gray-400 text-sm mt-3 font-semibold">
+          <Text className="text-slate-500 text-sm mt-3 font-bold">
             Mengambil data tugas...
           </Text>
         </Box>
@@ -283,20 +287,20 @@ export default function HomeScreen() {
           }
           ListEmptyComponent={
             <Box className="flex-1 items-center justify-center py-20 px-8">
-              <Box className="bg-background-900 border border-white/10 p-5 rounded-full mb-4">
-                <FontAwesome name="check-square-o" size={40} className="text-gray-600" />
+              <Box className="bg-white border border-slate-100 p-5 rounded-full mb-4 shadow-md shadow-slate-100">
+                <FontAwesome name="check-square-o" size={40} className="text-slate-300" />
               </Box>
-              <Heading size="md" className="text-white text-center font-bold">
+              <Heading size="md" className="text-slate-800 text-center font-extrabold">
                 Tidak Ada Tugas
               </Heading>
-              <Text className="text-gray-400 text-center mt-2 text-sm max-w-xs font-semibold">
+              <Text className="text-slate-500 text-center mt-2 text-sm max-w-xs font-semibold">
                 {kataKunci
                   ? 'Tidak ada tugas yang cocok dengan kata kunci pencarian Anda.'
                   : 'Hebat! Semua tugas Anda telah selesai, atau Anda belum menambahkan tugas baru.'}
               </Text>
               {!kataKunci && (
                 <Button
-                  className="bg-primary-500 rounded-xl px-5 py-2 mt-5 shadow-lg active:scale-95"
+                  className="bg-primary-600 rounded-xl px-5 py-2 mt-5 shadow-lg shadow-primary-600/20 active:scale-95"
                   onPress={() => router.push('/tugas/tambah')}
                 >
                   <ButtonText className="text-sm font-bold text-white">Tambah Tugas Baru</ButtonText>
@@ -311,7 +315,7 @@ export default function HomeScreen() {
       <Fab
         size="lg"
         placement="bottom right"
-        className="bg-primary-500 hover:bg-primary-600 m-4 rounded-full shadow-lg shadow-primary-500/30 active:scale-90"
+        className="bg-primary-600 hover:bg-primary-700 m-4 rounded-full shadow-lg shadow-primary-600/30 active:scale-90"
         onPress={() => router.push('/tugas/tambah')}
         aria-label="Tambah tugas baru"
       >

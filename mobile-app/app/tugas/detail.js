@@ -47,9 +47,9 @@ export default function DetailTugasScreen() {
 
   if (!item) {
     return (
-      <Box className="flex-1 bg-background-950 justify-center items-center p-6">
-        <Text className="text-gray-400 font-semibold mb-4">Tugas tidak ditemukan</Text>
-        <Button className="bg-primary-500 rounded-xl" onPress={() => router.back()}>
+      <Box className="flex-1 bg-slate-50 justify-center items-center p-6">
+        <Text className="text-slate-500 font-bold mb-4">Tugas tidak ditemukan</Text>
+        <Button className="bg-primary-600 rounded-xl" onPress={() => router.back()}>
           <ButtonText className="text-white font-bold">Kembali</ButtonText>
         </Button>
       </Box>
@@ -60,7 +60,7 @@ export default function DetailTugasScreen() {
   const warnaStatus = dapatkanWarnaStatus(item.status);
 
   return (
-    <ScrollView className="flex-1 bg-background-950">
+    <ScrollView className="flex-1 bg-slate-50">
       <Box className="p-6 pt-12 pb-20">
         
         {/* Header Detail */}
@@ -72,9 +72,9 @@ export default function DetailTugasScreen() {
               onPress={() => router.back()}
               aria-label="Kembali"
             >
-              <FontAwesome name="arrow-left" size={20} className="text-gray-400" />
+              <FontAwesome name="arrow-left" size={20} className="text-slate-500" />
             </Button>
-            <Heading size="xl" className="text-white font-extrabold">
+            <Heading size="xl" className="text-slate-900 font-extrabold">
               Detail Tugas
             </Heading>
           </Box>
@@ -83,38 +83,38 @@ export default function DetailTugasScreen() {
           <Button
             variant="solid"
             action="negative"
-            className="bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 rounded-xl px-3 py-1.5 h-auto"
+            className="bg-red-50 hover:bg-red-100 border border-red-200/50 rounded-xl px-3 py-1.5 h-auto shadow-sm shadow-red-100"
             onPress={tanganiHapus}
           >
-            <FontAwesome name="trash" size={14} className="text-red-400 mr-1" />
-            <ButtonText className="text-red-400 font-bold text-xs">Hapus</ButtonText>
+            <FontAwesome name="trash" size={14} className="text-red-600 mr-1" />
+            <ButtonText className="text-red-600 font-bold text-xs">Hapus</ButtonText>
           </Button>
         </Box>
 
         {/* Card Konten Detail */}
-        <Card className="bg-background-900/40 border border-white/5 p-6 rounded-2xl gap-5 mb-6">
+        <Card className="bg-white border border-slate-100 p-6 rounded-3xl gap-5 mb-6 shadow-sm shadow-slate-100">
           
           {/* Judul Tugas */}
           <Box className="gap-2">
-            <Heading className="text-white text-2xl font-black leading-tight">
+            <Heading className="text-slate-900 text-2xl font-black leading-tight">
               {item.judul}
             </Heading>
-            <Text className="text-gray-400 text-sm font-semibold">
-              📚 Mata Kuliah: <Text className="text-primary-400 font-extrabold">{item.mata_kuliah}</Text>
+            <Text className="text-slate-500 text-sm font-bold">
+              📚 Mata Kuliah: <Text className="text-primary-600 font-extrabold">{item.mata_kuliah}</Text>
             </Text>
           </Box>
 
           {/* Badges Prioritas & Status */}
-          <Box className="flex-row gap-3 border-y border-white/5 py-4 flex-wrap">
+          <Box className="flex-row gap-3 border-y border-slate-100 py-4 flex-wrap">
             <Box className="flex-1 min-w-[120px] gap-1">
-              <Text className="text-gray-400 text-3xs font-extrabold tracking-wider">PRIORITAS</Text>
+              <Text className="text-slate-400 text-3xs font-extrabold tracking-wider">PRIORITAS</Text>
               <Badge variant="solid" action={warnaPrioritas} className="rounded-full px-3 py-0.5 mt-1 self-start">
                 <BadgeText className="text-2xs font-extrabold">{item.prioritas}</BadgeText>
               </Badge>
             </Box>
 
             <Box className="flex-1 min-w-[120px] gap-1">
-              <Text className="text-gray-400 text-3xs font-extrabold tracking-wider">STATUS</Text>
+              <Text className="text-slate-400 text-3xs font-extrabold tracking-wider">STATUS</Text>
               <Badge variant="outline" action={warnaStatus} className="rounded-full px-3 py-0.5 mt-1 self-start border border-current">
                 <BadgeText className="text-2xs font-extrabold">{item.status.replace('_', ' ')}</BadgeText>
               </Badge>
@@ -122,23 +122,23 @@ export default function DetailTugasScreen() {
           </Box>
 
           {/* Deadline */}
-          <Box className="gap-1 bg-background-950/40 border border-white/5 p-4 rounded-xl">
-            <Text className="text-gray-400 text-3xs font-extrabold tracking-wider">BATAS WAKTU (DEADLINE)</Text>
-            <Text className="text-white text-sm font-bold mt-1.5">
+          <Box className="gap-1 bg-slate-50 border border-slate-100 p-4 rounded-2xl shadow-inner">
+            <Text className="text-slate-400 text-3xs font-extrabold tracking-wider">BATAS WAKTU (DEADLINE)</Text>
+            <Text className="text-slate-800 text-sm font-extrabold mt-1.5">
               📅 {formatTanggalIndo(item.tgl_deadline)}
             </Text>
           </Box>
 
           {/* Deskripsi */}
           <Box className="gap-2">
-            <Text className="text-gray-400 text-3xs font-extrabold tracking-wider">DESKRIPSI DETAIL</Text>
-            <Text className="text-gray-200 text-sm font-medium leading-relaxed mt-1">
+            <Text className="text-slate-400 text-3xs font-extrabold tracking-wider">DESKRIPSI DETAIL</Text>
+            <Text className="text-slate-700 text-sm font-semibold leading-relaxed mt-1">
               {item.deskripsi || 'Tidak ada deskripsi untuk tugas ini.'}
             </Text>
           </Box>
 
           {/* Checkbox Selesai & Tanggal Penyelesaian */}
-          <Box className="border-t border-white/5 pt-4 gap-3">
+          <Box className="border-t border-slate-100 pt-4 gap-3">
             <Box className="flex-row items-center gap-3">
               <Checkbox
                 size="md"
@@ -147,18 +147,18 @@ export default function DetailTugasScreen() {
                 onChange={() => tandaiSelesai(item.id)}
                 aria-label={`Tandai selesai`}
               >
-                <CheckboxIndicator className="rounded-md border-white/20 checked:bg-success-600 checked:border-success-600">
+                <CheckboxIndicator className="rounded-md border-slate-300 checked:bg-success-600 checked:border-success-600">
                   <CheckboxIcon as={CheckIcon} className="text-white" />
                 </CheckboxIndicator>
               </Checkbox>
-              <Text className="text-gray-300 text-sm font-bold">
+              <Text className="text-slate-800 text-sm font-bold">
                 Tandai sebagai sudah selesai
               </Text>
             </Box>
 
             {item.sudah_selesai && item.tgl_selesai ? (
-              <Box className="bg-success-500/5 border border-success-500/10 p-3 rounded-xl mt-1">
-                <Text className="text-success-400 text-xs font-semibold">
+              <Box className="bg-success-50 border border-success-200 p-3 rounded-xl mt-1 shadow-sm shadow-success-100">
+                <Text className="text-success-600 text-xs font-bold">
                   🎉 Diselesaikan pada: {formatTanggalIndo(item.tgl_selesai)}
                 </Text>
               </Box>
@@ -168,7 +168,7 @@ export default function DetailTugasScreen() {
 
         {/* Tombol Edit */}
         <Button
-          className="bg-primary-500 hover:bg-primary-600 rounded-xl py-3.5 flex-row justify-center items-center gap-2 active:scale-95 shadow-lg shadow-primary-500/20"
+          className="bg-primary-600 hover:bg-primary-700 rounded-xl py-3.5 flex-row justify-center items-center gap-2 active:scale-95 shadow-lg shadow-primary-600/20"
           onPress={() => router.push(`/tugas/edit?id=${item.id}`)}
         >
           <FontAwesome name="pencil" size={16} className="text-white" />

@@ -63,7 +63,7 @@ export default function RegisterScreen() {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      className="flex-1 bg-background-950"
+      className="flex-1 bg-slate-50"
     >
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
@@ -71,28 +71,28 @@ export default function RegisterScreen() {
       >
         <Box className="flex-1 justify-center px-6 py-8">
           {/* Background Gradient */}
-          <Box className="absolute top-0 left-0 right-0 h-[400px] opacity-35">
+          <Box className="absolute top-0 left-0 right-0 h-[400px] opacity-15">
             <Gradient />
           </Box>
 
           <Box className="w-full max-w-md mx-auto z-10">
             {/* Header Form */}
             <Box className="mb-6 items-center">
-              <Heading className="text-white text-3xl font-extrabold tracking-tight mb-2">
+              <Heading className="text-slate-900 text-3xl font-extrabold tracking-tight mb-2">
                 Buat Akun Baru
               </Heading>
-              <Text className="text-gray-400 text-center text-sm font-medium">
+              <Text className="text-slate-500 text-center text-sm font-semibold">
                 Daftar sekarang untuk mulai mengelola tugas-tugas kuliah Anda
               </Text>
             </Box>
 
             {/* Kotak Form Glassmorphism */}
-            <Box className="bg-background-900/60 p-6 rounded-2xl border border-white/10 shadow-2xl backdrop-blur-md gap-4">
+            <Box className="bg-white p-6 rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/50 gap-4">
               
               {/* Pesan Error Feedback */}
               {(error || errorValidasi) && (
-                <Box className="bg-red-500/10 border border-red-500/30 p-3 rounded-lg">
-                  <Text className="text-red-400 text-xs font-semibold">
+                <Box className="bg-red-50 border border-red-100 p-3.5 rounded-xl">
+                  <Text className="text-red-600 text-xs font-bold">
                     ⚠️ {errorValidasi || error}
                   </Text>
                 </Box>
@@ -100,33 +100,34 @@ export default function RegisterScreen() {
 
               {/* Input Nama */}
               <Box className="gap-1.5">
-                <Text className="text-gray-300 font-semibold text-sm">
+                <Text className="text-slate-700 font-bold text-sm">
                   Nama Lengkap
                 </Text>
                 <Input
                   variant="outline"
                   size="md"
-                  className="bg-background-950/40 border-white/10 focus:border-primary-500 rounded-xl"
+                  className="bg-slate-50/50 border-slate-200 focus:border-primary-500 rounded-xl"
                 >
                   <InputField
                     placeholder="Nama Lengkap Anda"
                     value={nama}
                     onChangeText={setNama}
                     autoCapitalize="words"
-                    className="text-white text-sm"
+                    className="text-slate-900 text-sm font-medium"
+                    placeholderTextColor="#94a3b8"
                   />
                 </Input>
               </Box>
 
               {/* Input Email */}
               <Box className="gap-1.5">
-                <Text className="text-gray-300 font-semibold text-sm">
+                <Text className="text-slate-700 font-bold text-sm">
                   Email
                 </Text>
                 <Input
                   variant="outline"
                   size="md"
-                  className="bg-background-950/40 border-white/10 focus:border-primary-500 rounded-xl"
+                  className="bg-slate-50/50 border-slate-200 focus:border-primary-500 rounded-xl"
                 >
                   <InputField
                     placeholder="nama@mahasiswa.ac.id"
@@ -134,20 +135,21 @@ export default function RegisterScreen() {
                     onChangeText={setEmail}
                     keyboardType="email-address"
                     autoCapitalize="none"
-                    className="text-white text-sm"
+                    className="text-slate-900 text-sm font-medium"
+                    placeholderTextColor="#94a3b8"
                   />
                 </Input>
               </Box>
 
               {/* Input Kata Sandi */}
               <Box className="gap-1.5">
-                <Text className="text-gray-300 font-semibold text-sm">
+                <Text className="text-slate-700 font-bold text-sm">
                   Kata Sandi
                 </Text>
                 <Input
                   variant="outline"
                   size="md"
-                  className="bg-background-950/40 border-white/10 focus:border-primary-500 rounded-xl"
+                  className="bg-slate-50/50 border-slate-200 focus:border-primary-500 rounded-xl"
                 >
                   <InputField
                     placeholder="Minimal 6 karakter"
@@ -155,7 +157,8 @@ export default function RegisterScreen() {
                     value={kataSandi}
                     onChangeText={setKataSandi}
                     autoCapitalize="none"
-                    className="text-white text-sm"
+                    className="text-slate-900 text-sm font-medium"
+                    placeholderTextColor="#94a3b8"
                   />
                   <InputSlot
                     className="pr-3"
@@ -163,7 +166,7 @@ export default function RegisterScreen() {
                   >
                     <InputIcon
                       as={tampilkanSandi ? EyeOffIcon : EyeIcon}
-                      className="text-gray-400"
+                      className="text-slate-400"
                     />
                   </InputSlot>
                 </Input>
@@ -171,13 +174,13 @@ export default function RegisterScreen() {
 
               {/* Input Konfirmasi Kata Sandi */}
               <Box className="gap-1.5">
-                <Text className="text-gray-300 font-semibold text-sm">
+                <Text className="text-slate-700 font-bold text-sm">
                   Konfirmasi Kata Sandi
                 </Text>
                 <Input
                   variant="outline"
                   size="md"
-                  className="bg-background-950/40 border-white/10 focus:border-primary-500 rounded-xl"
+                  className="bg-slate-50/50 border-slate-200 focus:border-primary-500 rounded-xl"
                 >
                   <InputField
                     placeholder="Ulangi kata sandi"
@@ -185,7 +188,8 @@ export default function RegisterScreen() {
                     value={konfirmasiSandi}
                     onChangeText={setKonfirmasiSandi}
                     autoCapitalize="none"
-                    className="text-white text-sm"
+                    className="text-slate-900 text-sm font-medium"
+                    placeholderTextColor="#94a3b8"
                   />
                   <InputSlot
                     className="pr-3"
@@ -193,7 +197,7 @@ export default function RegisterScreen() {
                   >
                     <InputIcon
                       as={tampilkanKonfirmasi ? EyeOffIcon : EyeIcon}
-                      className="text-gray-400"
+                      className="text-slate-400"
                     />
                   </InputSlot>
                 </Input>
@@ -203,7 +207,7 @@ export default function RegisterScreen() {
               <Button
                 onPress={tanganiDaftar}
                 disabled={sedangMemuat}
-                className="bg-primary-500 hover:bg-primary-600 rounded-xl py-3 mt-3 shadow-lg shadow-primary-500/20 active:scale-95"
+                className="bg-primary-600 hover:bg-primary-700 rounded-xl py-3 mt-3 shadow-lg shadow-primary-600/20 active:scale-95"
               >
                 {sedangMemuat ? (
                   <ButtonSpinner color="white" />
@@ -216,7 +220,7 @@ export default function RegisterScreen() {
 
               {/* Tautan Kembali ke Login */}
               <Box className="flex-row justify-center items-center mt-2 gap-1">
-                <Text className="text-gray-400 text-xs font-medium">
+                <Text className="text-slate-500 text-xs font-semibold">
                   Sudah memiliki akun?
                 </Text>
                 <Button
@@ -228,7 +232,7 @@ export default function RegisterScreen() {
                     router.back();
                   }}
                 >
-                  <Text className="text-primary-400 text-xs font-bold hover:underline">
+                  <Text className="text-primary-600 text-xs font-extrabold hover:underline">
                     Masuk di sini
                   </Text>
                 </Button>

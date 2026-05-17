@@ -34,9 +34,9 @@ export default function GateAut() {
   }, [sudahSiap, sedangMemuat, token]);
 
   return (
-    <Box className="flex-1 bg-background-900 justify-center items-center h-[100vh]">
+    <Box className="flex-1 bg-slate-50 justify-center items-center h-[100vh]">
       {/* Background Gradient Premium */}
-      <Box className="absolute h-[500px] w-[500px] lg:w-[700px] lg:h-[700px] opacity-40">
+      <Box className="absolute h-[500px] w-[500px] lg:w-[700px] lg:h-[700px] opacity-15">
         <Gradient />
       </Box>
 
@@ -44,15 +44,15 @@ export default function GateAut() {
         <Box className="h-[120px] w-[120px] justify-center items-center">
           <Logo />
         </Box>
-        <Text className="text-white font-bold text-3xl tracking-wider">
+        <Text className="text-slate-900 font-extrabold text-3xl tracking-wider">
           TugasKu
         </Text>
-        <Text className="text-gray-400 text-center font-medium px-6 -mt-2">
+        <Text className="text-slate-500 text-center font-semibold px-6 -mt-2">
           Catatan Tugas Kuliah Modern & Terorganisir
         </Text>
-        <Box className="flex-row items-center gap-3 mt-6 bg-background-800/60 py-3 px-6 rounded-full border border-white/10">
+        <Box className="flex-row items-center gap-3 mt-6 bg-white py-3 px-6 rounded-full border border-slate-100 shadow-md shadow-slate-100">
           <Spinner size="small" color="#3b82f6" />
-          <Text className="text-gray-300 text-sm font-medium">
+          <Text className="text-slate-700 text-sm font-semibold">
             Memuat data...
           </Text>
         </Box>

@@ -61,28 +61,28 @@ export default function ProfileScreen() {
   };
 
   return (
-    <ScrollView className="flex-1 bg-background-950">
+    <ScrollView className="flex-1 bg-slate-50">
       <Box className="flex-1 p-6 pb-20 pt-16">
         
         {/* Header Profil */}
         <Box className="items-center mb-8 gap-3">
           {/* Avatar Ring Premium */}
-          <Box className="bg-primary-500/10 border-2 border-primary-500 p-6 rounded-full relative">
-            <FontAwesome name="user" size={60} className="text-primary-400" />
-            <Box className="absolute bottom-1 right-1 bg-success-500 h-4 w-4 rounded-full border-2 border-background-950" />
+          <Box className="bg-primary-50 border-2 border-primary-500 p-6 rounded-full relative">
+            <FontAwesome name="user" size={60} className="text-primary-600" />
+            <Box className="absolute bottom-1 right-1 bg-success-500 h-4 w-4 rounded-full border-2 border-white" />
           </Box>
-          <Heading size="xl" className="text-white font-extrabold mt-2">
+          <Heading size="xl" className="text-slate-900 font-extrabold mt-2">
             {pengguna?.nama || 'Pengguna'}
           </Heading>
-          <Text className="text-gray-400 text-sm font-medium -mt-2">
+          <Text className="text-slate-500 text-sm font-semibold -mt-2">
             {pengguna?.email || 'email@mahasiswa.ac.id'}
           </Text>
         </Box>
 
         {/* Informasi Status Sukses */}
         {pesanSukses ? (
-          <Box className="bg-success-500/10 border border-success-500/30 p-3 rounded-xl mb-4">
-            <Text className="text-success-400 text-xs font-semibold text-center">
+          <Box className="bg-success-50 border border-success-200 p-3.5 rounded-xl mb-4 shadow-sm shadow-success-100">
+            <Text className="text-success-600 text-xs font-bold text-center">
               ✅ {pesanSukses}
             </Text>
           </Box>
@@ -90,31 +90,31 @@ export default function ProfileScreen() {
 
         {/* Kotak Ringkasan Statistik */}
         <Box className="flex-row justify-between gap-4 mb-6">
-          <Card className="flex-1 bg-background-900/40 border border-white/5 p-4 rounded-2xl items-center">
-            <Text className="text-gray-400 text-3xs font-extrabold tracking-wider">TOTAL TUGAS</Text>
-            <Text className="text-white text-2xl font-black mt-1">{totalTugas}</Text>
+          <Card className="flex-1 bg-white border border-slate-100 p-4 rounded-2xl items-center shadow-sm shadow-slate-100">
+            <Text className="text-slate-400 text-3xs font-extrabold tracking-wider">TOTAL TUGAS</Text>
+            <Text className="text-slate-800 text-2xl font-black mt-1">{totalTugas}</Text>
           </Card>
-          <Card className="flex-1 bg-background-900/40 border border-white/5 p-4 rounded-2xl items-center">
-            <Text className="text-success-400 text-3xs font-extrabold tracking-wider">SELESAI</Text>
-            <Text className="text-success-400 text-2xl font-black mt-1">{tugasSelesai}</Text>
+          <Card className="flex-1 bg-white border border-slate-100 p-4 rounded-2xl items-center shadow-sm shadow-slate-100">
+            <Text className="text-success-600 text-3xs font-extrabold tracking-wider">SELESAI</Text>
+            <Text className="text-success-600 text-2xl font-black mt-1">{tugasSelesai}</Text>
           </Card>
-          <Card className="flex-1 bg-background-900/40 border border-white/5 p-4 rounded-2xl items-center">
-            <Text className="text-primary-400 text-3xs font-extrabold tracking-wider">MENUNGGU</Text>
-            <Text className="text-primary-400 text-2xl font-black mt-1">{tugasMenunggu}</Text>
+          <Card className="flex-1 bg-white border border-slate-100 p-4 rounded-2xl items-center shadow-sm shadow-slate-100">
+            <Text className="text-primary-600 text-3xs font-extrabold tracking-wider">MENUNGGU</Text>
+            <Text className="text-primary-600 text-2xl font-black mt-1">{tugasMenunggu}</Text>
           </Card>
         </Box>
 
         {/* Kotak Pengaturan Profil */}
-        <Card className="bg-background-900/40 border border-white/5 p-5 rounded-2xl mb-6 gap-4">
-          <Box className="flex-row justify-between items-center pb-2 border-b border-white/5">
-            <Heading size="md" className="text-white font-extrabold">Informasi Akun</Heading>
+        <Card className="bg-white border border-slate-100 p-5 rounded-3xl mb-6 gap-4 shadow-sm shadow-slate-100">
+          <Box className="flex-row justify-between items-center pb-2 border-b border-slate-100">
+            <Heading size="md" className="text-slate-900 font-extrabold">Informasi Akun</Heading>
             {!sedangMengedit ? (
               <Button
                 variant="link"
                 className="p-0 h-auto min-w-0"
                 onPress={() => setSedangMengedit(true)}
               >
-                <Text className="text-primary-400 text-xs font-bold">Ubah Nama</Text>
+                <Text className="text-primary-600 text-xs font-bold">Ubah Nama</Text>
               </Button>
             ) : (
               <Button
@@ -125,26 +125,26 @@ export default function ProfileScreen() {
                   setSedangMengedit(false);
                 }}
               >
-                <Text className="text-gray-400 text-xs font-bold">Batal</Text>
+                <Text className="text-slate-400 text-xs font-bold">Batal</Text>
               </Button>
             )}
           </Box>
 
           {/* Edit / Detail Input Nama */}
           <Box className="gap-1.5">
-            <Text className="text-gray-400 text-xs font-bold">Nama Lengkap</Text>
+            <Text className="text-slate-400 text-xs font-bold">Nama Lengkap</Text>
             {sedangMengedit ? (
               <Box className="flex-row gap-2 items-center">
-                <Input className="flex-1 bg-background-950 border-white/10 rounded-xl px-3 py-1">
+                <Input className="flex-1 bg-slate-50 border-slate-200 rounded-xl px-3 py-1">
                   <InputField
                     value={namaBaru}
                     onChangeText={setNamaBaru}
-                    className="text-white text-sm"
+                    className="text-slate-900 text-sm font-semibold"
                   />
                 </Input>
                 <Button
                   size="sm"
-                  className="bg-primary-500 rounded-xl px-4"
+                  className="bg-primary-600 rounded-xl px-4"
                   onPress={tanganiPerbaruiProfil}
                   disabled={sedangMemuat}
                 >
@@ -156,20 +156,20 @@ export default function ProfileScreen() {
                 </Button>
               </Box>
             ) : (
-              <Text className="text-white text-sm font-semibold">{pengguna?.nama}</Text>
+              <Text className="text-slate-900 text-sm font-bold">{pengguna?.nama}</Text>
             )}
           </Box>
 
           {/* Informasi Email (Read-Only) */}
           <Box className="gap-1.5">
-            <Text className="text-gray-400 text-xs font-bold">Email</Text>
-            <Text className="text-white text-sm font-semibold">{pengguna?.email}</Text>
+            <Text className="text-slate-400 text-xs font-bold">Email</Text>
+            <Text className="text-slate-900 text-sm font-bold">{pengguna?.email}</Text>
           </Box>
 
           {/* Informasi Terdaftar */}
           <Box className="gap-1.5">
-            <Text className="text-gray-400 text-xs font-bold">Terdaftar Pada</Text>
-            <Text className="text-white text-sm font-semibold">
+            <Text className="text-slate-400 text-xs font-bold">Terdaftar Pada</Text>
+            <Text className="text-slate-900 text-sm font-bold">
               {formatTanggalIndo(pengguna?.dibuat || new Date().toISOString())}
             </Text>
           </Box>
@@ -179,11 +179,11 @@ export default function ProfileScreen() {
         <Button
           variant="solid"
           action="negative"
-          className="bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 rounded-xl py-3.5 flex-row justify-center items-center gap-2 active:scale-95"
+          className="bg-red-50 hover:bg-red-100 border border-red-200/50 rounded-xl py-3.5 flex-row justify-center items-center gap-2 active:scale-95 shadow-sm shadow-red-100"
           onPress={tanganiKeluar}
         >
-          <FontAwesome name="sign-out" size={16} className="text-red-400" />
-          <ButtonText className="text-red-400 font-bold text-sm tracking-wide">
+          <FontAwesome name="sign-out" size={16} className="text-red-600" />
+          <ButtonText className="text-red-600 font-bold text-sm tracking-wide">
             Keluar dari Aplikasi
           </ButtonText>
         </Button>

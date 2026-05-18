@@ -8,14 +8,11 @@ Server backend aplikasi **TugasKu** dibangun menggunakan **PHP Native** terstruk
 
 Di dalam folder `backend-php`, terdapat struktur berkas sebagai berikut:
 * `src/`: Berisi kode logika utama.
-  * `Core/`: Penanganan koneksi database, router, request, dan response.
-  * `Controllers/`: Controller untuk menangani alur data pengguna (`AuthController.js`) dan tugas (`TaskController.js`).
-  * `Middleware/`: Memvalidasi token JWT untuk mengamankan data pengguna agar tidak diakses orang lain.
-  * `Models/`: Model database (`Pengguna.js` & `Tugas.js`) yang melakukan kueri SQL.
-  * `routes/` & `api.php`: Pendefinisian jalur alamat REST API.
-* `public/index.php`: Pintu masuk utama (Entry Point) seluruh request API.
+  * `api.php`: Berisi seluruh logika aplikasi, mulai dari koneksi database, router REST API, autentikasi JWT, hingga penanganan kueri SQL.
+* `public/index.php`: Pintu masuk utama (Entry Point) seluruh request API yang memuat file `api.php`.
+* `database/`: Menyimpan file skema atau export database SQL (`.sql`).
 * `.env.example`: Contoh konfigurasi lingkungan basis data & JWT.
-* `composer.json`: Berkas dependensi pustaka PHP (seperti Firebase JWT dan PHP Dotenv).
+* `.htaccess`: Konfigurasi server web Apache untuk me-routing semua request ke `public/index.php`.
 
 ---
 
@@ -55,29 +52,27 @@ CORS_ALLOWED_ORIGINS=*
 ```
 *Catatan: Pastikan `DB_NAME` sama dengan nama database yang Anda buat di phpMyAdmin (`catatan_tugas_db`).*
 
-### Langkah 3: Instal Pustaka Pendukung via Composer
-Buka Terminal (di VS Code atau terminal bawaan) pada direktori `backend-php/`, lalu jalankan perintah:
-```bash
-composer install
+### Langkah 3: Pastikan Ekstensi PHP Aktif
+Karena backend ini merupakan murni **PHP Native** tanpa library pihak ketiga (tanpa Composer), pastikan Anda telah mengaktifkan ekstensi PDO MySQL di konfigurasi `php.ini` Anda:
+```ini
+extension=pdo_mysql
 ```
-Perintah ini akan secara otomatis mengunduh pustaka **Firebase JWT** (untuk autentikasi token) dan **PHP Dotenv** (untuk membaca file `.env`), serta mengkonfigurasi auto-loading berkas PHP.
+(Secara default di XAMPP, ekstensi ini biasanya sudah aktif).
 
 ---
 
-## 🚀 3. Menjalankan Server Backend Lokal
+## 🚀 3. Menjalankan Server Backend Lokal (dengan XAMPP)
 
-Untuk menjalankan server PHP built-in, jalankan perintah berikut di Terminal folder `backend-php/`:
-```bash
-composer run serve
-```
-Atau Anda bisa menggunakan perintah bawaan PHP langsung:
-```bash
-php -S localhost:8000 -t public
-```
-Jika berhasil, terminal akan menampilkan pesan:
-`PHP Development Server (http://localhost:8000) started`
+Karena aplikasi menggunakan database MySQL, sangat disarankan untuk menjalankannya menggunakan XAMPP. Ikuti langkah berikut:
 
-Server backend Anda sekarang aktif dan siap melayani permintaan API dari aplikasi mobile!
+1. Pastikan folder proyek `backend-php` (atau seluruh folder `Tugas Akhir`) sudah dipindahkan atau berada di dalam direktori `htdocs/` pada instalasi XAMPP Anda (misal di Windows: `C:\xampp\htdocs\backend-php`, atau Linux: `/opt/lampp/htdocs/backend-php`).
+2. Buka aplikasi **XAMPP Control Panel**.
+3. Jalankan module **Apache** dan **MySQL** dengan mengklik tombol **Start**.
+4. Server backend Anda sekarang aktif dan dapat diuji melalui browser atau aplikasi mobile pada alamat lokal (contoh: `http://localhost/backend-php/public`). 
+
+*(Catatan: Saat diakses dari HP Android / aplikasi mobile, ganti `localhost` dengan alamat IPv4 komputer Anda, contoh: `http://192.168.1.5/backend-php/public`)*
+
+Server backend Anda sekarang siap melayani permintaan API dari aplikasi mobile!
 
 ---
 
@@ -87,17 +82,20 @@ Aplikasi mobile TugasKu akan berkomunikasi dengan backend melalui alamat-alamat 
 
 | Metode HTTP | Alamat Endpoint | Keterangan Fitur | Perlindungan JWT? |
 | :--- | :--- | :--- | :--- |
-| **POST** | `/api/daftar` | Registrasi akun pengguna baru | ❌ Tidak |
-| **POST** | `/api/masuk` | Login pengguna & mendapatkan token JWT | ❌ Tidak |
-| **GET** | `/api/tugas` | Mengambil seluruh daftar tugas milik pengguna |  Ya |
-| **POST** | `/api/tugas` | Membuat tugas kuliah baru |  Ya |
-| **PUT** | `/api/tugas?id={id}` | Memperbarui detail tugas tertentu |  Ya |
-| **DELETE** | `/api/tugas?id={id}` | Menghapus tugas tertentu secara permanen |  Ya |
-| **PUT** | `/api/tugas/selesai?id={id}` | Menandai tugas sebagai selesai/belum |  Ya |
-| **PUT** | `/api/profil` | Mengubah nama lengkap profil pengguna |  Ya |
+| **POST** | `/api/aut/daftar` | Registrasi akun pengguna baru | ❌ Tidak |
+| **POST** | `/api/aut/masuk` | Login pengguna & mendapatkan token JWT | ❌ Tidak |
+| **POST** | `/api/aut/keluar` | Logout pengguna dari sistem | ❌ Tidak |
+| **GET** | `/api/aut/profil` | Mengambil data profil pengguna | ✅ Ya |
+| **PUT** | `/api/aut/profil` | Mengubah nama/email profil pengguna | ✅ Ya |
+| **GET** | `/api/tugas` | Mengambil seluruh daftar tugas milik pengguna | ✅ Ya |
+| **POST** | `/api/tugas` | Membuat tugas kuliah baru | ✅ Ya |
+| **GET** | `/api/tugas/{id}` | Mengambil detail tugas tertentu | ✅ Ya |
+| **PUT** | `/api/tugas/{id}` | Memperbarui detail tugas tertentu | ✅ Ya |
+| **PATCH** | `/api/tugas/{id}/selesai`| Menandai tugas sebagai selesai/belum | ✅ Ya |
+| **DELETE** | `/api/tugas/{id}` | Menghapus tugas tertentu secara permanen | ✅ Ya |
 
 ---
 
 > [!NOTE]
 > **Penting Mengenai Proteksi JWT**:
-> Endpoint yang dilindungi JWT (ditandai  **Ya**) mewajibkan aplikasi mobile untuk melampirkan header `Authorization: Bearer <TOKEN>` dalam setiap pengiriman request. Ini mencegah pengguna lain memodifikasi atau melihat tugas milik Anda.
+> Endpoint yang dilindungi JWT (ditandai **✅ Ya**) mewajibkan aplikasi mobile untuk melampirkan header `Authorization: Bearer <TOKEN>` dalam setiap pengiriman request. Ini mencegah pengguna lain memodifikasi atau melihat tugas milik Anda.

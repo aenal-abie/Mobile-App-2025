@@ -23,8 +23,9 @@ export default function ProfileScreen() {
 
   // Menghitung statistik tugas untuk user dashboard
   const totalTugas = tugas.length;
-  const tugasSelesai = tugas.filter((t) => t.sudah_selesai).length;
-  const tugasMenunggu = totalTugas - tugasSelesai;
+  const tugasSelesai = tugas.filter((t) => t.status === 'SELESAI' || t.sudah_selesai).length;
+  const tugasDikerjakan = tugas.filter((t) => t.status === 'SEDANG_DIKERJAKAN' && !t.sudah_selesai).length;
+  const tugasMenunggu = tugas.filter((t) => t.status === 'MENUNGGU' && !t.sudah_selesai).length;
 
   const tanganiPerbaruiProfil = async () => {
     if (!namaBaru.trim()) {
@@ -89,23 +90,35 @@ export default function ProfileScreen() {
         ) : null}
 
         {/* Kotak Ringkasan Statistik */}
-        <Box className="flex-row justify-between gap-4 mb-6">
-          <Card className="flex-1 bg-white border border-slate-100 p-4 rounded-2xl items-center shadow-sm shadow-slate-100">
-            <Text className="text-slate-400 text-3xs font-extrabold tracking-wider">TOTAL TUGAS</Text>
-            <Text className="text-slate-800 text-2xl font-black mt-1">{totalTugas}</Text>
-          </Card>
-          <Card className="flex-1 bg-white border border-slate-100 p-4 rounded-2xl items-center shadow-sm shadow-slate-100">
-            <Text className="text-success-600 text-3xs font-extrabold tracking-wider">SELESAI</Text>
-            <Text className="text-success-600 text-2xl font-black mt-1">{tugasSelesai}</Text>
-          </Card>
-          <Card className="flex-1 bg-white border border-slate-100 p-4 rounded-2xl items-center shadow-sm shadow-slate-100">
-            <Text className="text-primary-600 text-3xs font-extrabold tracking-wider">MENUNGGU</Text>
-            <Text className="text-primary-600 text-2xl font-black mt-1">{tugasMenunggu}</Text>
-          </Card>
+        <Box className="flex-row flex-wrap justify-between mb-6" style={{ rowGap: 16 }}>
+          <Box style={{ width: '48%' }}>
+            <Card className="bg-white border border-slate-100 p-4 rounded-2xl items-center">
+              <Text className="text-slate-400 text-3xs font-extrabold tracking-wider">TOTAL TUGAS</Text>
+              <Text className="text-slate-800 text-2xl font-black mt-1">{totalTugas}</Text>
+            </Card>
+          </Box>
+          <Box style={{ width: '48%' }}>
+            <Card className="bg-white border border-slate-100 p-4 rounded-2xl items-center">
+              <Text className="text-success-600 text-3xs font-extrabold tracking-wider">SELESAI</Text>
+              <Text className="text-success-600 text-2xl font-black mt-1">{tugasSelesai}</Text>
+            </Card>
+          </Box>
+          <Box style={{ width: '48%' }}>
+            <Card className="bg-white border border-slate-100 p-4 rounded-2xl items-center">
+              <Text className="text-warning-500 text-3xs font-extrabold tracking-wider">DIKERJAKAN</Text>
+              <Text className="text-warning-500 text-2xl font-black mt-1">{tugasDikerjakan}</Text>
+            </Card>
+          </Box>
+          <Box style={{ width: '48%' }}>
+            <Card className="bg-white border border-slate-100 p-4 rounded-2xl items-center">
+              <Text className="text-primary-600 text-3xs font-extrabold tracking-wider">MENUNGGU</Text>
+              <Text className="text-primary-600 text-2xl font-black mt-1">{tugasMenunggu}</Text>
+            </Card>
+          </Box>
         </Box>
 
         {/* Kotak Pengaturan Profil */}
-        <Card className="bg-white border border-slate-100 p-5 rounded-3xl mb-6 gap-4 shadow-sm shadow-slate-100">
+        <Card className="bg-white border border-slate-100 p-5 rounded-3xl mb-6 gap-4">
           <Box className="flex-row justify-between items-center pb-2 border-b border-slate-100">
             <Heading size="md" className="text-slate-900 font-extrabold">Informasi Akun</Heading>
             {!sedangMengedit ? (

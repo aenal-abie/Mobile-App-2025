@@ -80,8 +80,8 @@ export default function HomeScreen() {
 
     return (
       <Card
-        className={`mb-4 mx-4 p-5 rounded-3xl border border-slate-100 bg-white relative active:opacity-90 shadow-sm shadow-slate-100 ${
-          item.sudah_selesai ? 'opacity-60 bg-slate-50/50' : ''
+        className={`mb-4 mx-4 p-5 rounded-3xl border border-slate-100 bg-white relative active:opacity-90 ${
+          item.sudah_selesai ? 'opacity-60 bg-slate-100' : ''
         }`}
         style={{ elevation: 2 }}
       >
@@ -160,7 +160,7 @@ export default function HomeScreen() {
   return (
     <Box className="flex-1 bg-slate-50">
       {/* Header Premium */}
-      <Box className="pt-14 pb-5 px-5 bg-white border-b border-slate-100 shadow-sm shadow-slate-100/50">
+      <Box className="pt-14 pb-5 px-5 bg-white border-b border-slate-100">
         <Box className="flex-row justify-between items-center">
           <Box>
             <Text className="text-slate-400 text-xs font-bold tracking-wider">
@@ -208,7 +208,7 @@ export default function HomeScreen() {
                 onPress={() => setFilter(item.value)}
                 className={`rounded-full px-4 py-1.5 h-auto ${
                   isActive
-                    ? 'bg-primary-600 shadow-sm shadow-primary-600/20'
+                    ? 'bg-primary-600'
                     : 'bg-white border border-slate-200'
                 }`}
               >
@@ -232,7 +232,7 @@ export default function HomeScreen() {
         </Text>
         
         {/* Toggle Urutan */}
-        <Box className="flex-row bg-white border border-slate-200 rounded-full p-0.5 shadow-sm shadow-slate-100">
+        <Box className="flex-row bg-white border border-slate-200 rounded-full p-0.5">
           <Button
             size="xs"
             onPress={() => setSort('deadline')}
@@ -287,7 +287,7 @@ export default function HomeScreen() {
           }
           ListEmptyComponent={
             <Box className="flex-1 items-center justify-center py-20 px-8">
-              <Box className="bg-white border border-slate-100 p-5 rounded-full mb-4 shadow-md shadow-slate-100">
+              <Box className="bg-white border border-slate-100 p-5 rounded-full mb-4">
                 <FontAwesome name="check-square-o" size={40} className="text-slate-300" />
               </Box>
               <Heading size="md" className="text-slate-800 text-center font-extrabold">
@@ -300,7 +300,7 @@ export default function HomeScreen() {
               </Text>
               {!kataKunci && (
                 <Button
-                  className="bg-primary-600 rounded-xl px-5 py-2 mt-5 shadow-lg shadow-primary-600/20 active:scale-95"
+                  className="bg-primary-600 rounded-xl px-5 py-2 mt-5 active:scale-95"
                   onPress={() => router.push('/tugas/tambah')}
                 >
                   <ButtonText className="text-sm font-bold text-white">Tambah Tugas Baru</ButtonText>
@@ -315,7 +315,7 @@ export default function HomeScreen() {
       <Fab
         size="lg"
         placement="bottom right"
-        className="bg-primary-600 hover:bg-primary-700 m-4 rounded-full shadow-lg shadow-primary-600/30 active:scale-90"
+        className="bg-primary-600 hover:bg-primary-700 m-4 rounded-full active:scale-90"
         onPress={() => router.push('/tugas/tambah')}
         aria-label="Tambah tugas baru"
       >

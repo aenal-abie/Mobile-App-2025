@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import storage from '../utils/storage';
 import { apiAut } from '../services/auth';
 
 export const gunakkanStoreAut = create((set) => ({
@@ -12,8 +12,8 @@ export const gunakkanStoreAut = create((set) => ({
   inisialisasiAuth: async () => {
     try {
       set({ sedangMemuat: true });
-      const token = await AsyncStorage.getItem('token');
-      const penggunaStr = await AsyncStorage.getItem('pengguna');
+      const token = await storage.getItem('token');
+      const penggunaStr = await storage.getItem('pengguna');
 
       if (token && penggunaStr) {
         set({ token, pengguna: JSON.parse(penggunaStr) });
@@ -34,7 +34,7 @@ export const gunakkanStoreAut = create((set) => ({
 
       if (dataRespon.sukses) {
         const penggunaBaru = dataRespon.data ?? {};
-        await AsyncStorage.setItem('pengguna', JSON.stringify(penggunaBaru));
+        await storage.setItem('pengguna', JSON.stringify(penggunaBaru));
         set({ pengguna: penggunaBaru });
       } else {
         set({ error: dataRespon.pesan || 'Pendaftaran gagal' });
@@ -64,8 +64,8 @@ export const gunakkanStoreAut = create((set) => ({
           throw new Error('Respons login tidak lengkap dari server');
         }
 
-        await AsyncStorage.setItem('token', token);
-        await AsyncStorage.setItem('pengguna', JSON.stringify(penggunaBaru));
+        await storage.setItem('token', token);
+        await storage.setItem('pengguna', JSON.stringify(penggunaBaru));
         set({ token, pengguna: penggunaBaru });
       } else {
         set({ error: dataRespon.pesan || 'Login gagal' });
@@ -83,8 +83,8 @@ export const gunakkanStoreAut = create((set) => ({
   // Keluar / Logout
   keluar: async () => {
     try {
-      await AsyncStorage.removeItem('token');
-      await AsyncStorage.removeItem('pengguna');
+      await storage.removeItem('token');
+      await storage.removeItem('pengguna');
     } catch (err) {
       console.error('Error saat keluar:', err);
     } finally {
@@ -104,7 +104,7 @@ export const gunakkanStoreAut = create((set) => ({
         if (!penggunaBaru) {
           throw new Error('Respons profil tidak lengkap dari server');
         }
-        await AsyncStorage.setItem('pengguna', JSON.stringify(penggunaBaru));
+        await storage.setItem('pengguna', JSON.stringify(penggunaBaru));
         set({ pengguna: penggunaBaru });
       } else {
         set({ error: dataRespon.pesan || 'Gagal memperbarui profil' });

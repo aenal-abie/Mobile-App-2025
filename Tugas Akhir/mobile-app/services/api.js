@@ -1,5 +1,5 @@
 import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import storage from '../utils/storage';
 import { API_CONFIG } from '../config/constants';
 
 const api = axios.create({
@@ -14,7 +14,7 @@ const api = axios.create({
 api.interceptors.request.use(
   async (config) => {
     try {
-      const token = await AsyncStorage.getItem('token');
+      const token = await storage.getItem('token');
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -34,8 +34,8 @@ api.interceptors.response.use(
   async (error) => {
     if (error.response?.status === 401) {
       try {
-        await AsyncStorage.removeItem('token');
-        await AsyncStorage.removeItem('pengguna');
+        await storage.removeItem('token');
+        await storage.removeItem('pengguna');
       } catch (storageError) {
         console.error('Gagal membersihkan storage:', storageError);
       }
